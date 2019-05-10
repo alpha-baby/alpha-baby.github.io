@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="AlphaBaby">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="AlphaBaby">
+    
+    <meta name="keywords" content="golang,python,linux">
+    
+    <meta name="description" content="这里是Alphababy的博客，主要是记录学习笔记和分享技术。">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Linux中常用的监控命令 · AlphaBaby&#39;s Blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/head.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">AlphaBaby&#39;s Blog.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Linux中常用的监控命令</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href="/">AlphaBaby's Blog.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/assets/bg-2.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Linux中常用的监控命令
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="linux">linux</a>
+    
+</div>
+                
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2019/05/10</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="Linux中常用的监控命令"><a href="#Linux中常用的监控命令" class="headerlink" title="Linux中常用的监控命令"></a>Linux中常用的监控命令</h1><p>在以前使用windows系统的时候，常常会遇到系统变卡，然后我们就会使用快捷键 <code>ctrl</code>+<code>shift</code>+<code>ESC</code> 来调出windows的任务管理器，我们可以看到当前运行的进程，进程所占的<code>CPU</code>资源，内存资源等，还可以直接强制结束掉进程。</p>
+<p>我们在使用linux的时候也同样会出现这样的问题，如果你遇到了，那么你就要学会这些linux查看系统资源的命令。</p>
+<p>[toc]</p>
+<p>下面我分为这么几个角度分别说下这些命令的使用：</p>
+<ol>
+<li>整机</li>
+<li>CPU</li>
+<li>内存</li>
+<li>硬盘</li>
+<li>磁盘</li>
+<li>网络I/O</li>
+</ol>
+<h2 id="整机"><a href="#整机" class="headerlink" title="整机"></a>整机</h2><h3 id="top-命令"><a href="#top-命令" class="headerlink" title="top 命令"></a><code>top</code> 命令</h3><p><strong>参数说明：</strong></p>
+<ul>
+<li><code>d</code>:指定每两次屏幕信息刷新之间的时间间隔。当然用户可以使用s交互命令来改变之。</li>
+<li><code>p</code>:通过指定监控进程ID来仅仅监控某个进程的状态。</li>
+<li><code>q</code>:该选项将使top没有任何延迟的进行刷新。如果调用程序有超级用户权限，那么top将以尽可能高的优先级运行。</li>
+<li><code>S</code>:指定累计模式。</li>
+<li><code>s</code>:使top命令在安全模式中运行。这将去除交互命令所带来的潜在危险。</li>
+<li><code>i</code>:使top不显示任何闲置或者僵死进程。</li>
+<li><code>c</code>:显示整个命令行而不只是显示命令名。</li>
+</ul>
+<p><strong>常用命令说明：</strong></p>
+<ul>
+<li><code>Ctrl+L</code>:擦除并且重写屏幕</li>
+<li><code>K</code>:终止一个进程。系统将提示用户输入需要终止的进程PID，以及需要发送给该进程什么样的信号。一般的终止进程可以使用15信号；如果不能正常结束那就使用信号9强制结束该进程。默认值是信号15。在安全模式中此命令被屏蔽。</li>
+<li><code>i</code>:忽略闲置和僵死进程。这是一个开关式命令。</li>
+<li><code>q</code>:退出程序</li>
+<li><code>r</code>:重新安排一个进程的优先级别。系统提示用户输入需要改变的进程PID以及需要设置的进程优先级值。输入一个正值将使优先级降低，反之则可以使该进程拥有更高的优先权。默认值是10。</li>
+<li><code>S</code>:切换到累计模式。</li>
+<li><code>s</code>:改变两次刷新之间的延迟时间。系统将提示用户输入新的时间，单位为s。如果有小数，就换算成m s。输入0值则系统将不断刷新，默认值是5 s。需要注意的是如果设置太小的时间，很可能会引起不断刷新，从而根本来不及看清显示的情况，而且系统负载也会大大增加。</li>
+<li><code>f</code>或者<code>F</code>:从当前显示中添加或者删除项目。</li>
+<li><code>o</code>或者<code>O</code>:改变显示项目的顺序</li>
+<li><code>l</code>:切换显示平均负载和启动时间信息。</li>
+<li><code>m</code>:切换显示内存信息。</li>
+<li><code>t</code>:切换显示进程和CPU状态信息。</li>
+<li><code>c</code>:切换显示命令名称和完整命令行。</li>
+<li><code>M</code>:根据驻留内存大小进行排序。</li>
+<li><code>P</code>:根据CPU使用百分比大小进行排序。</li>
+<li><code>T</code>:根据时间/累计时间进行排序。</li>
+<li><code>W</code>:将当前设置写入~/.toprc文件中。</li>
+</ul>
+<p>当我们输入<code>top</code>命令后我们可以看到：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/13859457-3470350b29c263b8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>其中有一行是白色的，白色中显示的是字段名称：<br><strong>PID: 进程id号</strong><br><strong>PPID：父进程id号</strong><br><strong>UID：有效用户id号</strong><br><strong>USER：有效用户名</strong><br><strong>RUSER: 真实用户名</strong><br><strong><a href="https://dwz.cn/5WbsEwqb" target="_blank" rel="noopener">TTY</a>：终端设备</strong><br><strong>%CPU：计算资源</strong><br><strong>%MEN：内存</strong><br><strong>%TIME+：CPU时间</strong></p>
+<p><strong>VIRT：virtual memory usage 虚拟内存</strong></p>
+<ol>
+<li>进程“需要的”虚拟内存大小，包括进程使用的库、代码、数据等</li>
+<li>假如进程申请100m的内存，但实际只使用了10m，那么它会增长100m，而不是实际的使用量</li>
+</ol>
+<p><strong>RES：resident memory usage 常驻内存</strong></p>
+<ol>
+<li>进程当前使用的内存大小，但不包括swap out</li>
+<li>包含其他进程的共享</li>
+<li>如果申请100m的内存，实际使用10m，它只增长10m，与VIRT相反</li>
+<li>关于库占用内存的情况，它只统计加载的库文件所占内存大小</li>
+</ol>
+<p><strong>SHR：shared memory 共享内存</strong></p>
+<ol>
+<li>除了自身进程的共享内存，也包括其他进程的共享内存</li>
+<li>虽然进程只使用了几个共享库的函数，但它包含了整个共享库的大小</li>
+<li>计算某个进程所占的物理内存大小公式：RES – SHR</li>
+<li>swap out后，它将会降下来</li>
+</ol>
+<h3 id="uptime-命令"><a href="#uptime-命令" class="headerlink" title="uptime 命令"></a><code>uptime</code> 命令</h3><p><strong>简化版top命令</strong></p>
+<p>从上面的参数，top命令显示的内容，我们就可以看到很多的参数，也是特别详细的，但是我们可能有时候就只是想了解一些简单的信息，这时候我们就可以使用<code>uptime</code>这个命令了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@VM-0-4-ubuntu:~# uptime</span><br><span class="line"> 15:17:22 up 171 days, 16:56,  1 user,  load average: 0.00, 0.02, 0.02</span><br></pre></td></tr></table></figure>
+<ul>
+<li>系统当前时间 15:17:22</li>
+<li>171 days, 16:56 从上次启动开始系统运行的时间</li>
+<li>1 user 注意这里实际是连接数量，可以自己测试出来，同一用户多个连接的时候算多个</li>
+<li>load average: 0.00, 0.02, 0.02 这是重头戏，分别描述了1分钟5分钟15分钟内系统平均负载</li>
+</ul>
+<p><strong>参数</strong></p>
+<ul>
+<li>-p, –pretty show uptime in pretty format//以比较友好的格式输出</li>
+<li>-h, –help display this help text//显示帮助选项</li>
+<li>-s, –since system up since, in yyyy-mm-dd HH:MM:SS format//系统启动时间</li>
+<li>-V, –version display version information and exit//版本信息</li>
+</ul>
+<h2 id="CPU"><a href="#CPU" class="headerlink" title="CPU"></a>CPU</h2><h3 id="vmstat-命令"><a href="#vmstat-命令" class="headerlink" title="vmstat 命令"></a><code>vmstat</code> 命令</h3><p><code>vmstat</code>命令可以查看很多信息，包括服务器的CPU使用率，内存使用，虚拟内存交换情况,IO读写情况。但是我们一般使用<code>vmstat</code>命令一般常用来查看cpu的情况。</p>
+<p><strong>参数</strong></p>
+<ul>
+<li><p><code>-a</code>：显示活跃和非活跃内存</p>
+</li>
+<li><p><code>-f</code>：显示从系统启动至今的fork数量 。</p>
+</li>
+<li><p><code>-m</code>：显示slabinfo</p>
+</li>
+<li><p><code>-n</code>：只在开始时显示一次各字段名称。</p>
+</li>
+<li><p><code>-s</code>：显示内存相关统计信息及多种系统活动数量。</p>
+</li>
+<li><p><code>delay</code>：刷新时间间隔。如果不指定，只显示一条结果。</p>
+</li>
+<li><p><code>count</code>：刷新次数。如果不指定刷新次数，但指定了刷新时间间隔，这时刷新次数为无穷。</p>
+</li>
+<li><p><code>-d</code>：显示磁盘相关统计信息。</p>
+</li>
+<li><p><code>-p</code>：显示指定磁盘分区统计信息</p>
+</li>
+<li><p><code>-S</code>：使用指定单位显示。参数有 k 、K 、m 、M ，分别代表1000、1024、1000000、1048576字节（byte）。默认单位为K（1024 bytes）</p>
+</li>
+<li><p><code>-V</code>：显示vmstat版本信息。</p>
+</li>
+</ul>
+<p><img src="https://upload-images.jianshu.io/upload_images/13859457-241abb37b04a7e87.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="每2秒采集一次每次采集"></p>
+<ul>
+<li><code>procs</code>（进程）<ul>
+<li><code>r</code>：当前运行队列中线程的数目，代表线程处于可运行状态，但CPU还未能执行.，这个值可以作为判断CPU是否繁忙的一个指标；当这个值超过了CPU数目，就会出现CPU瓶颈了；这个我们可以结合<code>top</code>命令的负载值同步评估系统性能；</li>
+<li><code>b</code>：等待IO的进程数量；如果该值一直都很大，说明IO比较繁忙，处理较慢；</li>
+</ul>
+</li>
+<li><code>memory</code>（内存）<ul>
+<li><code>swpd</code>：虚拟内存已使用的大小；如果swpd的值不为0，但是si，so的值长期为0，这种情况不会影响系统性能；</li>
+<li><code>free</code>：空闲的物理内存的大小；</li>
+<li><code>buff</code>：用作缓冲的内存大小；</li>
+<li><code>cache</code>：用作缓存的内存大小；如果cache的值大的时候，说明cache处的文件数多，如果频繁访问到的文件都能被cache处，那么磁盘的读IO bi会非常小；</li>
+</ul>
+</li>
+<li><code>swap</code>（交换空间，单位：KB）；内存够用的时候，这2个值都是0，如果这2个值长期大于0时，系统性能会受到影响，磁盘IO和CPU资源都会被消耗。有时我们看到空闲内存（free）很少的或接近于0时，就认为内存不够用了，不能光看这一点，还要结合si和so，如果free很少，但是si和so也很少（大多时候是0），那么不用担心，系统性能这时不会受到影响的；<ul>
+<li><code>si</code>：每秒从交换区写到内存的大小；</li>
+<li><code>so</code>：每秒写入交换区的内存大小；</li>
+</ul>
+</li>
+<li><code>io</code>（单位：块/秒）<ul>
+<li><code>bi</code>：每秒读取的块数；</li>
+<li><code>bo</code>：每秒写入的块数；随机磁盘读写的时候，这2个值越大，能看到CPU在IO等待的值也会越大；</li>
+</ul>
+</li>
+<li><code>system</code>（系统）；这2个值越大，会看到由内核消耗的CPU时间会越大；<ul>
+<li><code>in</code>：每秒中断数，包括时钟中断；</li>
+<li><code>cs</code>：每秒上下文切换数；</li>
+</ul>
+</li>
+<li><code>cpu</code>（以百分比表示）<ul>
+<li><code>us</code>：用户进程执行时间(user time)；</li>
+<li><code>sy</code>：系统进程执行时间(system time)；如果 <code>us</code>+<code>sy</code>大于80%系统负担就比较大了。</li>
+<li><code>id</code>：空闲时间(包括IO等待时间)；</li>
+<li><code>wa</code>：等待IO时间；wa的值高时，说明IO等待比较严重，这可能由于磁盘大量作随机访问造成，也有可能磁盘出现瓶颈。</li>
+</ul>
+</li>
+</ul>
+<h3 id="mpstat-命令"><a href="#mpstat-命令" class="headerlink" title="mpstat 命令"></a><code>mpstat</code> 命令</h3><p>查看所有cpu核的信息</p>
+<p>常用 <code>mpstat -P ALL 2</code> 每两秒采样一次所有cpu的信息</p>
+<p><strong>参数</strong></p>
+<p>mpstat [-P {|ALL}] [internal [count]]</p>
+<ul>
+<li><code>-P {|ALL}</code> 表示监控哪个CPU， cpu在[0,cpu个数-1]中取值</li>
+<li><code>internal</code> 相邻的两次采样的间隔时间、</li>
+<li><code>count</code> 采样的次数，count只能和delay一起使用<br>当没有参数时，mpstat则显示系统启动以后所有信息的平均值。有interval时，第一行的信息自系统启动以来的平均信息。从第二行开始，输出为前一个interval时间段的平均信息。</li>
+</ul>
+<p><img src="https://upload-images.jianshu.io/upload_images/13859457-a809a4bd787ff492.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><strong>字段说明：</strong></p>
+<ul>
+<li><code>%usr</code>：表示用户进程所使用CPU的百分比</li>
+<li><code>%nice</code>：表示使用nice命令对进程进行降级时CPU的百分比 %sys：表示内核进程使用CPU的百分比</li>
+<li><code>%iowait</code>：表示等待进行 I/O 所使用 CPU 的时间百分比</li>
+<li><code>%irq</code>：表示用于处理系统中断的 CPU 百分比</li>
+<li><code>%soft</code>：表示用于软件中断的 CPU 百分比</li>
+<li><code>%steal</code> ： 显示虚拟机管理器在服务另一个虚拟处理器时虚拟CPU处在非自愿等待下花费时间的百分比</li>
+<li><code>%guest</code> ： 显示运行虚拟处理器时CPU花费时间的百分比</li>
+<li><code>%idle</code>：显示 CPU 的空闲时间</li>
+</ul>
+<h3 id="pidstat命令"><a href="#pidstat命令" class="headerlink" title="pidstat命令"></a><code>pidstat</code>命令</h3><p>主要用于监控全部或指定进程占用系统资源的情况。但是我们一般都是用这个命令查看具体的某一个进程的详细情况。</p>
+<ul>
+<li><code>-u</code>：默认的参数，显示各个进程的cpu使用统计</li>
+<li><code>-r</code>：显示各个进程的内存使用统计</li>
+<li><code>-d</code>：显示各个进程的IO使用情况</li>
+<li><code>-p</code>：指定进程号</li>
+<li><code>-w</code>：显示每个进程的上下文切换情况</li>
+<li><code>-t</code>：显示选择任务的线程的统计信息外的额外信息</li>
+<li><code>-T { TASK | CHILD | ALL }</code><br>  这个选项指定了pidstat监控的。TASK表示报告独立的task，CHILD关键字表示报告进程下所有线程统计信息。ALL表示报告独立的task和task下面的所有线程。<br>  注意：task和子线程的全局的统计信息和pidstat选项无关。这些统计信息不会对应到当前的统计间隔，这些统计信息只有在子线程kill或者完成的时候才会被收集。</li>
+<li><code>-V</code>：版本号</li>
+<li><code>-h</code>：在一行上显示了所有活动，这样其他程序可以容易解析。</li>
+<li><code>-I</code>：在SMP环境，表示任务的CPU使用率/内核数量</li>
+<li><code>-l</code>：显示命令名和所有参数</li>
+</ul>
+<p>但是我们还是经常这样使用这个命令：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/13859457-43909ac969cbbee7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="查看11321这个进程的cpu使用情况"></p>
+<p><strong>字段说明</strong></p>
+<ul>
+<li><code>PID</code>：进程ID</li>
+<li><code>%usr</code>：进程在用户空间占用cpu的百分比</li>
+<li><code>%system</code>：进程在内核空间占用cpu的百分比</li>
+<li><code>%guest</code>：进程在虚拟机占用cpu的百分比</li>
+<li><code>%CPU</code>：进程占用cpu的百分比</li>
+<li><code>CPU</code>：处理进程的cpu编号</li>
+<li><code>Command</code>：当前进程对应的命令</li>
+</ul>
+<p><a href="https://www.jianshu.com/p/3991c0dba094" target="_blank" rel="noopener">更多的使用详情可以查看这篇文章</a></p>
+<h2 id="内存"><a href="#内存" class="headerlink" title="内存"></a>内存</h2><h3 id="free-命令"><a href="#free-命令" class="headerlink" title="free 命令"></a><code>free</code> 命令</h3><p>这是我们用来查看系统内存信息最常用的命令。</p>
+<p><strong>参数</strong></p>
+<ul>
+<li><code>-b</code>：以Byte为单位显示内存使用情况；</li>
+<li><code>-k</code>：以KB为单位显示内存使用情况；</li>
+<li><code>-m</code>：以MB为单位显示内存使用情况；</li>
+<li><code>-g</code>：以GB为单位显示内存的使用情况；</li>
+<li><code>-o</code>：不显示缓冲区调节列；</li>
+<li><code>-s</code>&lt;间隔秒数&gt;：持续观察内存使用状况；</li>
+<li><code>-t</code>：显示内存总和列；</li>
+<li><code>-V</code>：显示版本信息。</li>
+</ul>
+<p><img src="https://upload-images.jianshu.io/upload_images/13859457-5633fc73c9407a5c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><strong>字段说明</strong></p>
+<ul>
+<li>total 内存总数: 15.7G</li>
+<li>used 已经使用的内存数: 15.6G</li>
+<li>free 空闲的内存数: 93M</li>
+<li>shared 当前已经废弃不用,总是0</li>
+<li>buffers Buffer 缓存内存数: 298M</li>
+<li>cached Page 缓存内存数:14G</li>
+</ul>
+<h3 id="pidstat-命令"><a href="#pidstat-命令" class="headerlink" title="pidstat 命令"></a><code>pidstat</code> 命令</h3><p>前面我们讲解了<code>pidstat</code>命令,但是这里我们也用这个命令来查看内存情况。</p>
+<p><code>pidstat -p 进程号 -r 采样每隔秒数</code></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/13859457-a2808dcfb396939c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><strong>字段说明</strong></p>
+<ul>
+<li><code>minflt/s</code>: 每秒次缺页错误次数(minor page faults)，次缺页错误次数意即虚拟内存地址映射成物理内存地址产生的page fault次数</li>
+<li><code>majflt/s</code>: 每秒主缺页错误次数(major page faults)，当虚拟内存地址映射成物理内存地址时，相应的page在swap中，这样的page fault为major page fault，一般在内存使用紧张时产生</li>
+<li><code>VSZ</code>:      该进程使用的虚拟内存(以kB为单位)</li>
+<li><code>RSS</code>:      该进程使用的物理内存(以kB为单位)</li>
+<li><code>%MEM</code>:     该进程使用内存的百分比</li>
+<li><code>Command</code>:  拉起进程对应的命令</li>
+</ul>
+<h2 id="硬盘"><a href="#硬盘" class="headerlink" title="硬盘"></a>硬盘</h2><h3 id="df-命令"><a href="#df-命令" class="headerlink" title="df 命令"></a><code>df</code> 命令</h3><p><strong>参数</strong></p>
+<ul>
+<li><code>-a</code>：–all，显示所有的文件系统，包括虚拟文件系统，参考示例2。</li>
+<li><code>-B</code>：–block-size，指定单位大小。比如1k，1m等，参考示例3。</li>
+<li><code>-h</code>：–human-readable，以人们易读的GB、MB、KB等格式显示，参考示例4。</li>
+<li><code>-H</code>：–si，和-h参数一样，但是不是以1024，而是1000，即1k=1000，而不是1k=1024。</li>
+<li><code>-i</code>：–inodes，不用硬盘容量，而是以inode的数量来显示，参考示例5。</li>
+<li><code>-k</code>：以KB的容量显示各文件系统，相当于–block-size=1k。</li>
+<li><code>-m</code>：以KB的容量显示各文件系统，相当于–block-size=1m。</li>
+<li><code>-l</code>：–local，只显示本地文件系统。</li>
+<li><code>--no-sync</code>：在统计使用信息之前不调用sync命令(默认)。</li>
+<li><code>-sync</code>：在统计使用信息之前调用sync命令。</li>
+<li><code>-P</code>：–portability，使用POSIX格式显示，参考示例6。</li>
+<li><code>-t</code>：–type=TYPE，只显示指定类型的文件系统，参考示例7。</li>
+<li><code>-T</code>：–print-type，显示文件系统类型，参考示例8。</li>
+<li><code>-x</code>：–exclude-type=TYPE，不显示指定类型的文件系统。</li>
+<li><code>--help</code>：显示帮助信息。</li>
+<li><code>--version</code>：显示版本信息。</li>
+</ul>
+<p>虽然有这么多的参数，但是我们还是常用 <code>df -h</code>直接查看所有的磁盘信息。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/13859457-186bc378cb318f19.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><strong>字段说明</strong></p>
+<ul>
+<li><code>Filesystem</code>：代表该文件系统时哪个分区，所以列出的是设备名称。<br>1K-blocks：说明下面的数字单位是1KB，可利用-h或-m来改变单位大小，也可以用-B来设置。</li>
+<li><code>Used</code>：已经使用的空间大小。</li>
+<li><code>Available</code>：剩余的空间大小。</li>
+<li><code>Use%</code>：磁盘使用率。如果使用率在90%以上时，就需要注意了，避免磁盘容量不足出现系统问题，尤其是对于文件内容增加较快的情况(如/home、/var/spool/mail等)。</li>
+<li><code>Mounted on</code>：磁盘挂载的目录，即该磁盘挂载到了哪个目录下面。</li>
+</ul>
+<h2 id="磁盘I-O"><a href="#磁盘I-O" class="headerlink" title="磁盘I/O"></a>磁盘I/O</h2><h3 id="iostat-命令"><a href="#iostat-命令" class="headerlink" title="iostat 命令"></a><code>iostat</code> 命令</h3><p><strong>参数</strong></p>
+<ul>
+<li><code>-c</code>: 仅显示CPU统计信息.与-d选项互斥.</li>
+<li><code>-d</code>: 仅显示磁盘统计信息.与-c选项互斥.</li>
+<li><code>-k</code>: 以K为单位显示每秒的磁盘请求数,默认单位块.</li>
+<li><code>-p</code>: device | ALL<br>与-x选项互斥,用于显示块设备及系统分区的统计信息.也可以在-p后指定一个设备名.</li>
+<li><code>-t</code>    在输出数据时,打印搜集数据的时间.</li>
+<li><code>-V</code>    打印版本号和帮助信息.</li>
+<li><code>-x</code>    输出扩展信息.</li>
+</ul>
+<p><img src="https://upload-images.jianshu.io/upload_images/13859457-a0912aea95f96db4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><strong>字段说明</strong></p>
+<ul>
+<li><code>rrqm/s</code>: 将读入请求合并后,每秒发送到设备的读入请求数.</li>
+<li><code>wrqm/s</code>: 将写入请求合并后,每秒发送到设备的写入请求数.</li>
+<li><code>r/s</code>: 每秒发送到设备的读入请求数.</li>
+<li><code>w/s</code>: 每秒发送到设备的写入请求数.</li>
+<li><code>rsec/s</code>: 每秒从设备读入的扇区数.</li>
+<li><code>wsec/s</code>: 每秒向设备写入的扇区数.</li>
+<li><code>rkB/s</code>: 每秒从设备读入的数据量,单位为K.</li>
+<li><code>wkB/s</code>: 每秒向设备写入的数据量,单位为K.</li>
+<li><code>avgrq-sz</code>: 发送到设备的请求的平均大小,单位是扇区.</li>
+<li><code>avgqu-sz</code>: 发送到设备的请求的平均队列长度.</li>
+<li><code>await</code>: I/O请求平均执行时间.包括发送请求和执行的时间.单位是毫秒.</li>
+<li><code>svctm</code>: 发送到设备的I/O请求的平均执行时间.单位是毫秒.</li>
+<li><code>%util</code>: 在I/O请求发送到设备期间,占用CPU时间的百分比.用于显示设备的带宽利用率. 当这个值接近100%时,表示设备带宽已经占满.</li>
+</ul>
+<h3 id="pidstat-命令-1"><a href="#pidstat-命令-1" class="headerlink" title="pidstat 命令"></a><code>pidstat</code> 命令</h3><p><code>pidstat -d 采样间隔时间 -p 进程id</code></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/13859457-a8aa03c1a0adbaa8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><strong>字段说明</strong></p>
+<ul>
+<li><code>PID</code>：进程id</li>
+<li><code>kB_rd/s</code>：每秒从磁盘读取的KB</li>
+<li><code>kB_wr/s</code>：每秒写入磁盘KB</li>
+<li><code>kB_ccwr/s</code>：任务取消的写入磁盘的KB。当任务截断脏的pagecache的时候会发生。</li>
+<li><code>COMMAND</code>:task的命令名</li>
+</ul>
+<h2 id="网络I-O"><a href="#网络I-O" class="headerlink" title="网络I/O"></a>网络I/O</h2><h3 id="ifstat-命令"><a href="#ifstat-命令" class="headerlink" title="ifstat 命令"></a><code>ifstat</code> 命令</h3><p><strong>参数</strong></p>
+<ul>
+<li><code>-l</code>:  监测环路网络接口。缺省情况下ifstat监测活动的所有非环路网络接口</li>
+<li><code>-a</code>:  监测能检测到的所有网络接口的状态信息。</li>
+<li><code>-z</code>:  隐藏流量是无的接口，如接口启动了但是未使用的。</li>
+<li><code>-i</code>: <interface>  指定要监测的接口。</interface></li>
+<li><code>-s</code>: 通过SNMP查询一个远程主机。</li>
+<li><code>-h</code>: 显示帮助信息</li>
+<li><code>-n</code>: 关闭周期性显示头部信息。</li>
+<li><code>-t</code>: 在每一行的开头加一个时间戳</li>
+<li><code>-T</code>: 报告所有检测接口的全部带宽</li>
+<li><code>-w</code>: 指定间隔时间（与官方的文档说明并不同，不知道是不是写文档的人写错，反正我测试后是间隔时间）</li>
+<li><code>-W</code>: 如果显示内容超出终端窗口的宽度，就换行</li>
+<li><code>-S</code>: 在同一行更新显示内容</li>
+<li><code>-b</code>: 用kbits/s显示带宽</li>
+<li><code>-q</code>: 按键模式</li>
+<li><code>-v</code>: 显示版本信息</li>
+<li><code>-d</code>: 指定一个驱动来收集状态信息</li>
+</ul>
+<p>每秒输出一次网络IO信息</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/13859457-810987e6c317172e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>其中的 <code>eth0</code> 为网卡。</p>
+
+    </article>
+    <!-- license  -->
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/uncategorized/hello-world/" title="Hello World">
+                    <div class="prevTitle">Hello World</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:1079781328@qq.com" class="iconfont-archer email" title="email"></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/alpha-baby" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title="wechat">
+                  
+                  <img class="profile-qr" src="/assets/wechat.png">
+                </span>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer qq" title="qq">
+                  
+                  <img class="profile-qr" src="/assets/qq.png">
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="//segmentfault.com/u/alphababy" class="iconfont-archer segmentFault" target="_blank" title="segmentFault"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="//space.bilibili.com/77479837" class="iconfont-archer bilibili" target="_blank" title="bilibili"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux中常用的监控命令"><span class="toc-number">1.</span> <span class="toc-text">Linux中常用的监控命令</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#整机"><span class="toc-number">1.1.</span> <span class="toc-text">整机</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#top-命令"><span class="toc-number">1.1.1.</span> <span class="toc-text">top 命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#uptime-命令"><span class="toc-number">1.1.2.</span> <span class="toc-text">uptime 命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CPU"><span class="toc-number">1.2.</span> <span class="toc-text">CPU</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#vmstat-命令"><span class="toc-number">1.2.1.</span> <span class="toc-text">vmstat 命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mpstat-命令"><span class="toc-number">1.2.2.</span> <span class="toc-text">mpstat 命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pidstat命令"><span class="toc-number">1.2.3.</span> <span class="toc-text">pidstat命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内存"><span class="toc-number">1.3.</span> <span class="toc-text">内存</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#free-命令"><span class="toc-number">1.3.1.</span> <span class="toc-text">free 命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pidstat-命令"><span class="toc-number">1.3.2.</span> <span class="toc-text">pidstat 命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#硬盘"><span class="toc-number">1.4.</span> <span class="toc-text">硬盘</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#df-命令"><span class="toc-number">1.4.1.</span> <span class="toc-text">df 命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#磁盘I-O"><span class="toc-number">1.5.</span> <span class="toc-text">磁盘I/O</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#iostat-命令"><span class="toc-number">1.5.1.</span> <span class="toc-text">iostat 命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pidstat-命令-1"><span class="toc-number">1.5.2.</span> <span class="toc-text">pidstat 命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#网络I-O"><span class="toc-number">1.6.</span> <span class="toc-text">网络I/O</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ifstat-命令"><span class="toc-number">1.6.1.</span> <span class="toc-text">ifstat 命令</span></a></li></ol></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 2
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/10</span><a class="archive-post-title" href="/uncategorized/Linux中常用的监控命令/">Linux中常用的监控命令</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/10</span><a class="archive-post-title" href="/uncategorized/hello-world/">Hello World</a>
+        </li>
+    
+    </ul></div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="linux"><span class="iconfont-archer">&#xe606;</span>linux</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br>
+    1、请确保node版本大于6.2<br>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "AlphaBaby"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
