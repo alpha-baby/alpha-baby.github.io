@@ -22,7 +22,7 @@
     <meta name="description" content="这里是Alphababy的博客，主要是记录学习笔记和分享技术。">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>AlphaBaby&#39;s Blog</title>
+    <title>宏定义的黑魔法 · AlphaBaby&#39;s Blog</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -77,6 +77,8 @@
 
     <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     
     <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
 /* This file is meant as a standalone workflow for
@@ -201,14 +203,23 @@
 </head>
 
     
-        <body class="home-body">
+        <body class="post-body">
     
     
-<header class="header index-header">
+<header class="header">
 
     <div class="read-progress"></div>
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/">AlphaBaby&#39;s Blog.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">宏定义的黑魔法</a>
+            </div>
+    </div>
     
     <a class="home-link" href="/">AlphaBaby's Blog.</a>
 </header>
@@ -227,17 +238,17 @@ height:50vh;
     <!-- 主页  -->
     
     
-    <!-- 文章页  -->
+    <!-- 404页  -->
             
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/assets/bg.jpg)"></div>
+    <div class="site-intro-img" style="background-image: url(/assets/bg-2.jpg)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            AlphaBaby's Blog.
-            <!-- 文章页  -->
+            宏定义的黑魔法
+            <!-- 404 -->
             
         </h1>
         <!-- 副标题 -->
@@ -245,12 +256,45 @@ height:50vh;
             <!-- 主页副标题  -->
             
             
-                Strength is the proud capital.
-            
-            <!-- 文章页  -->
+            <!-- 404 -->
             
         </p>
         <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class="post-intro-tags">
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags="github">github</a>
+    
+</div>
+                
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2019/05/11</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
         
     </div>
 </div>
@@ -351,220 +395,129 @@ height:50vh;
 </script>        
         <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
         <div class="container container-unloaded">
-            <main class="main index-page">
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/随笔/小白入坑同性交友网站github总结/">
-            
-                <span>宏定义的黑魔法</span>
-        </a>
-        <div class="abstract-content">
-            ##常用词汇及含义
-1. watch 表示会持续收到该项目的动态2. fork 复制某个项目到自己的github仓库3. star 可以理解为点赞的个数4. clone 将远程服务器上的源代码下载到本地5. follow 关注你感兴趣的作者，会收到他们的动态
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>##常用词汇及含义</p>
+<p><strong>1. watch</strong> 表示会持续收到该项目的动态<br><strong>2. fork</strong> 复制某个项目到自己的github仓库<br><strong>3. star</strong> 可以理解为点赞的个数<br><strong>4. clone</strong> 将远程服务器上的源代码下载到本地<br><strong>5. follow</strong> 关注你感兴趣的作者，会收到他们的动态</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/13859457-f175ed0b30b8d79b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>可以从图中看到我们可以在途中一次找到上面的几个功能的区域，但是没有<code>follow</code>，如果想要关注某个开发者可以直接点击他的头像进去他的主页在头像下方就可以<code>follow</code>某个开发者</p>
+<h2 id="in-关键字限制搜索范围"><a href="#in-关键字限制搜索范围" class="headerlink" title="in 关键字限制搜索范围"></a>in 关键字限制搜索范围</h2><p>我们可以使用一些搜索的技巧，就像我们使用搜索引擎一样，比如有个叫<code>google hack</code>的东西，很多学习安全的人都回去学google一些高级的搜索语法。在github中也同样有一些高级的搜索的语法。</p>
+<p>xxx关键词 in:name 或者 description 或 readme</p>
+<ol>
+<li>xxx in:name 项目名包含xxx的</li>
+<li>xxx in:description 项目描述包含xxx的</li>
+<li>xxx in:readme 项目的readme文件中包含xxx的</li>
+</ol>
+<p>这上面的三种搜索技巧可以，组合使用。<br>下面我们可以试一试：(搜索项目名和readme文件中都有wechat的项目)</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/13859457-f72c36f00737a631.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<h2 id="stars或fork数量关键词查找"><a href="#stars或fork数量关键词查找" class="headerlink" title="stars或fork数量关键词查找"></a>stars或fork数量关键词查找</h2><p><code>stars</code>和<code>fork</code> 通配符 <code>&gt;</code> 或者 <code>&gt;=</code> 或者 <code>&lt;</code> <code>&lt;=</code><br>范围搜索：例如搜索stars在100到1000之间的项目 就是 <code>starts:100..1000</code></p>
+<p>例如我们查找<code>star</code>数量大于2000的golang的项目：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/13859457-fe6cc6fc28ded912.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p> 查找<code>fork</code>数量大于3000的Go教程项目：</p>
+<p> <img src="https://upload-images.jianshu.io/upload_images/13859457-a38365b078aa0ae0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>查找<code>fork</code>数量大于1000并且<code>stars</code>数量在1000到5000之间的项目：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/13859457-f5da23cce2a79f6a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<h2 id="awesome-加强搜索"><a href="#awesome-加强搜索" class="headerlink" title="awesome 加强搜索"></a>awesome 加强搜索</h2><p>使用<code>awesome</code>可以在github中收集学习，工具，书籍类的相关项目<br>awesome 加关键字</p>
+<p>例如我们来收你MongoDB相关的学习资料：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/13859457-be3a6244727effe0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<h2 id="高亮代码"><a href="#高亮代码" class="headerlink" title="高亮代码"></a>高亮代码</h2><p>有很多时候可能我们会和别人讨论某个目录中某个文件中的某几行代码，这时候我们就可以把某几行代码标记为高亮，然后把对应的url链接发给别人，对方打开链接后就可以看到我们标记的高亮的代码了。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/13859457-c0b57fb6bbb3f726.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>我们首先可以鼠标左击行号就会选中这一行代码，接着到后面的行按住<code>shift</code>+<code>鼠标左击</code>就可以选中多行代码了，可以看到浏览器中的地址栏中的url链接，后面多出来了<code>#L26-L32</code>这样就可以标记高亮某几行代码了。</p>
+<h2 id="项目内搜索"><a href="#项目内搜索" class="headerlink" title="项目内搜索"></a>项目内搜索</h2><p>当我们进入到某个开发者开源的仓库后，我们就可以使用很多github自带的很多的快捷键功能。</p>
+<p>比如我们最常用的<code>t</code>:搜索源</p>
+<p><a href="#">源代码浏览</a></p>
+<table>
+<thead>
+<tr>
+<th>键盘快捷键</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>t</td>
+<td>激活文件查找器</td>
+</tr>
+<tr>
+<td>l</td>
+<td>跳转到代码中的一行</td>
+</tr>
+<tr>
+<td>w</td>
+<td>切换到新分支或标记</td>
+</tr>
+<tr>
+<td>y</td>
+<td>将URL展开为其规范形式。</td>
+</tr>
+<tr>
+<td>i</td>
+<td>显示或隐藏差异的评论。</td>
+</tr>
+<tr>
+<td>b</td>
+<td>公开指责观点。</td>
+</tr>
+</tbody>
+</table>
+<p>如果还想了解更多的快捷键，可以看github的官方文档，<a href="https://help.github.com/en/articles/using-keyboard-shortcuts" target="_blank" rel="noopener">快捷键</a></p>
+<h2 id="搜索某个地区内的大佬"><a href="#搜索某个地区内的大佬" class="headerlink" title="搜索某个地区内的大佬"></a>搜索某个地区内的大佬</h2><p>我们可以使用 <code>location:地点</code>，<code>language:语言</code> 来搜索大佬们，然后就可以和他们交换联系方式，同性交友就开始了。</p>
+<p>比如我们试试，搜索重庆地区的golang大佬:</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/13859457-8f58f413161cf840.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>如果你学会了这些简单的github骚操作，基本上就可以玩转github了。</p>
 
-可以从图中看到我们可以在途中一次找到上面的几个功能的区域，但是没有follow，如果想要关注某个开发者可以直接点击他的头像进去他的主页在头像下方就可以follow某个开发者
-in 关键字限制搜索范围我们可以使用一些搜索的技巧，就像我们使用搜索引擎一样，比如有个叫google hack的东西，很多学习安全的人都回去学google一些...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/05/11</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="github">github</a>
-    
-</div>
-            
-        </div>
     </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/linux/Linux中常用的监控命令/">
-            
-                <span>Linux中常用的监控命令</span>
-        </a>
-        <div class="abstract-content">
-            Linux中常用的监控命令在以前使用windows系统的时候，常常会遇到系统变卡，然后我们就会使用快捷键 ctrl+shift+ESC 来调出windows的任务管理器，我们可以看到当前运行的进程，进程所占的CPU资源，内存资源等，还可以直接强制结束掉进程。
-我们在使用linux的时候也同样会出现这样的问题，如果你遇到了，那么你就要学会这些linux查看系统资源的命令。
-[toc]
-下面我分为这么几个角度分别说下这些命令的使用：
-
-整机
-CPU
-内存
-硬盘
-磁盘
-网络I/O
-
-整机top 命令参数说明：
-
-d:指定每两次屏幕信息刷新之间的时间间隔。当然用户可以使用s交互命令来改变之。
-p...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/05/10</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class="abstract-tags">
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags="linux">linux</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href="/uncategorized/hello-world/">
-            
-                <span>Hello World</span>
-        </a>
-        <div class="abstract-content">
-            Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick StartCreate a new post1$ hexo new "My New Post"
-More info: Writing
-Run server1$ hexo server
-More...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/05/10</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
+    <!-- license  -->
     
     <!-- paginator  -->
-    
-</main>
-            <!-- profile -->
+    <ul class="post-paginator">
+        <li class="next">
             
-            <div class="profile">
-    <img class="profile-avatar" alt="avatar" src="/assets/head.jpg">
-    <div class="profile-name">AlphaBaby</div>
-    
-    <div class="profile-signature">
-        Iron man
-    </div>
-    
-    
-    <div class="profile-social">
-        
-    
-        
+        </li>
+        <li class="previous">
             
-                <a href="mailto:1079781328@qq.com" class="iconfont-archer email" title="email"></a>
+                <div class="prevSlogan">Previous Post</div>
+                <a href="/linux/Linux中常用的监控命令/" title="Linux中常用的监控命令">
+                    <div class="prevTitle">Linux中常用的监控命令</div>
+                </a>
             
-        
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
     
-        
-            
-                <a href="//github.com/alpha-baby" class="iconfont-archer github" target="_blank" title="github"></a>
-            
-        
     
-        
-            
-                <span class="iconfont-archer wechat" title="wechat">
-                  
-                  <img class="profile-qr" src="/assets/wechat.png">
-                </span>
-            
-        
+<div id="container"></div>
+<link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://www.wenjunjiang.win/js/gitment.js"></script>
+<script>
+    var gitment = new Gitment({
+        // id: "宏定义的黑魔法", // 可选。默认为 location.href
+		id: '{{ page.date }}',
+        owner: 'alpha-baby',
+        repo: 'alpha-baby.github.io',
+        oauth: {
+            client_id: '2f91e9f13438f02cb201',
+            client_secret: 'dabd2dc2c1bd9c512add0e0b12874e1f911ef281',
+        },
+    })
+    gitment.render('container')
+
+</script>
+
+
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
     
-        
-            
-                <span class="iconfont-archer qq" title="qq">
-                  
-                  <img class="profile-qr" src="/assets/qq.png">
-                </span>
-            
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-            
-                <a href="//segmentfault.com/u/alphababy" class="iconfont-archer segmentFault" target="_blank" title="segmentFault"></a>
-            
-        
-    
-        
-    
-        
-    
-        
-            
-                <a href="//space.bilibili.com/77479837" class="iconfont-archer bilibili" target="_blank" title="bilibili"></a>
-            
-        
-    
-        
-    
-        
-    
-        
-    
-        
     
 
-    </div>
-    
-    
-        <div class="friends">
-            <div>FRIENDS</div>
-            
-                
-            
-                
-            
-                
-            
-        </div>
-    
-    
-        <div class="about-me">
-            <a href="/about">ABOUT ME</a>
-        </div>
-    
-</div>
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
             
         </div>
         <footer class="footer footer-unloaded">
@@ -662,6 +615,24 @@ More...
 </footer>
     </div>
     <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#in-关键字限制搜索范围"><span class="toc-number">1.</span> <span class="toc-text">in 关键字限制搜索范围</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#stars或fork数量关键词查找"><span class="toc-number">2.</span> <span class="toc-text">stars或fork数量关键词查找</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#awesome-加强搜索"><span class="toc-number">3.</span> <span class="toc-text">awesome 加强搜索</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#高亮代码"><span class="toc-number">4.</span> <span class="toc-text">高亮代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#项目内搜索"><span class="toc-number">5.</span> <span class="toc-text">项目内搜索</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#搜索某个地区内的大佬"><span class="toc-number">6.</span> <span class="toc-text">搜索某个地区内的大佬</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number"></span> <span class="toc-text">总结</span></a>
+    </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
     <div class="sidebar sidebar-hide">
@@ -809,6 +780,8 @@ jsonContent:
     
     </div>
     <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
      
     </body>
 </html>
